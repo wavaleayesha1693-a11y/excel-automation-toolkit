@@ -1,30 +1,54 @@
 import logging
 from pathlib import Path
+
 from src.modules.file_handler import FileHandler
 from src.modules.excel_reader import ExcelReader
+from src.modules.data_validator import DataValidator
 
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s - %(message)s"
 )
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s - %(message)s"
-)
 
-handler = FileHandler()
-handler.validate_file_exists(
-    Path("C:\\Users\\ADMIN\\Downloads\\Documents\\Ayesha_PythonProjects\\6_June_Sat_Sunday_25_July_Mock_schedule.xlsx")
-                             )
+def main():
+    """
+    Main entry point for the Excel Automation Toolkit.
+    """
 
-handler.validate_file_extension(
-    Path("C:\\Users\\ADMIN\\Downloads\\Documents\\Ayesha_PythonProjects\\6_June_Sat_Sunday_25_July_Mock_schedule.xlsx")
-)
+    # File path
+    file_path = Path(
+        r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details.xlsx"
+    )
+
+    # Required columns
+    required_columns = [
+        "Employee_ID",
+        "Name",
+        "Salary"
+    ]
+
+    # Initialize classes
+    file_handler = FileHandler()
+    excel_reader = ExcelReader()
+    data_validator = DataValidator()
+
+    # Validate file
+    file_handler.validate_file_exists(file_path)
+    file_handler.validate_file_extension(file_path)
+
+    # Read Excel
+    dataframe = excel_reader.read_excel(file_path)
+
+    # Validate DataFrame
+    data_validator.validate_required_columns(
+        dataframe,
+        required_columns
+    )
+
+    print("\n✅ Validation completed successfully!")
 
 
-reader = ExcelReader()
-df = reader.read_excel(
-    # Path("C:\\Users\\ADMIN\\Downloads\\Documents\\Ayesha_PythonProjects\\6_June_Sat_Sunday_25_July_Mock_schedule.xlsx")
-    Path("C:\Users\ADMIN\Downloads\Assignments\Assignment-01(Variables, int, float and string).pdf")
-)
+if __name__ == "__main__":
+    main()
