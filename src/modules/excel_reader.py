@@ -1,21 +1,22 @@
 import logging
-import pandas as pd
-
-from pathlib import Path
-
-
-logger = logging.getLogger(__name__)
-
-import logging
 from pathlib import Path
 
 import pandas as pd
-
 
 logger = logging.getLogger(__name__)
 
 
 class ExcelReader:
+    """
+    Handles reading Excel files for the Excel Automation Toolkit.
+    """
+
+    def __init__(self): 
+        """
+        Initialize the ExcelReader. 
+        """ 
+        logger.info("ExcelReader initialized successfully.")
+
 
     def read_excel(self, file_path: Path) -> pd.DataFrame:
         """
@@ -28,28 +29,25 @@ class ExcelReader:
             pd.DataFrame: Excel data.
 
         Raises:
-            FileNotFoundError: If file does not exist.
-            Exception: For unexpected errors.
+            Exception: If the Excel file cannot be read.
         """
 
+        file_path = Path(file_path) # Ensure file_path is a Path object
+
         try:
-
-            if not file_path.exists():
-                raise FileNotFoundError(
-                    f"Excel file not found: {file_path}"
-                )
-
-            df = pd.read_excel(file_path)
+            dataframe = pd.read_excel(file_path)
 
             logger.info(
                 "Excel file read successfully: %s",
                 file_path
             )
 
-            return df
+            return dataframe
 
-        except Exception:
-            logger.exception(
-                "Error occurred while reading Excel file"
+        except Exception as error:
+            logger.error(
+                "Failed to read Excel file %s: %s",
+                file_path,
+                error
             )
             raise

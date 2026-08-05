@@ -4,6 +4,7 @@ from pathlib import Path
 from src.modules.file_handler import FileHandler
 from src.modules.excel_reader import ExcelReader
 from src.modules.data_validator import DataValidator
+from src.modules.data_cleaner import DataCleaner
 
 # Configure logging
 logging.basicConfig(
@@ -33,6 +34,7 @@ def main():
     file_handler = FileHandler()
     excel_reader = ExcelReader()
     data_validator = DataValidator()
+    data_cleaner = DataCleaner()
 
     # Validate file
     file_handler.validate_file_exists(file_path)
@@ -46,6 +48,12 @@ def main():
         dataframe,
         required_columns
     )
+
+    # Clean DataFrame
+    cleaned_dataframe = data_cleaner.remove_duplicate_rows(
+        dataframe
+    )    
+    
 
     print("\n✅ Validation completed successfully!")
 
