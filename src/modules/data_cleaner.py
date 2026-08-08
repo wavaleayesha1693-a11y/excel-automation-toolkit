@@ -64,14 +64,14 @@ class DataCleaner:
         
         """   
         try:
-            missing_report = datafrme.isna().sum().reset_index()
+            missing_report = dataframe.isna().sum().reset_index()
             missing_report.columns = ["Column", "Missing Count"]
             missing_report["Missing_Percentage"] = (
-                                        missing_report["Missing Count"] / len(datafrme) * 100)
+                                        missing_report["Missing Count"] / len(dataframe) * 100)
             
             
             logger.info("Generated missing value report.")
-            
+
             return missing_report
 
         except Exception as error:

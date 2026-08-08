@@ -5,6 +5,7 @@ from src.modules.file_handler import FileHandler
 from src.modules.excel_reader import ExcelReader
 from src.modules.data_validator import DataValidator
 from src.modules.data_cleaner import DataCleaner
+from src.modules.data_transformer import DataTransformer
 
 # Configure logging
 logging.basicConfig(
@@ -35,6 +36,7 @@ def main():
     excel_reader = ExcelReader()
     data_validator = DataValidator()
     data_cleaner = DataCleaner()
+    data_transformer = DataTransformer()
 
     # Validate file
     file_handler.validate_file_exists(file_path)
@@ -63,9 +65,21 @@ def main():
     cleaned_dataframe = data_cleaner.fill_missing_values(
         cleaned_dataframe
     )
-    print("\nMissing Value Report:\n", missing_value_report)
-    print("\n✅ DataFrame cleaning completed successfully!")
-    print("cleaned dataframe:\n", cleaned_dataframe)
+
+    # strip whitespace
+    transformed_dataframe = data_transformer.strip_whitespace(
+    cleaned_dataframe
+    )
+
+    # standardize_text
+    transformed_dataframe = data_transformer.standardize_text(
+        transformed_dataframe
+    )
+
+    # print("\nMissing Value Report:\n", missing_value_report)
+    # print("\n✅ DataFrame cleaning completed successfully!")
+    # print("cleaned dataframe:\n", cleaned_dataframe)
+    print("standardized text of the DataFrame:\n",transformed_dataframe)
     
 
 
