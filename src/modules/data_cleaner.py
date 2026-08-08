@@ -47,3 +47,54 @@ class DataCleaner:
                 error
             )
             raise
+
+
+    def fill_missing_values(self, dataframe:pd.DataFrame) -> pd.DataFrame:
+        """
+        Fill missing values in the DataFrame with a specified value.
+
+        Args:
+            dataframe (pd.DataFrame): DataFrame to clean.
+            
+        Returns:
+            pd.DataFrame: Cleaned DataFrame with missing values filled.  
+
+        Raises:
+            Exception: If filling missing values fails.          
+        
+        """
+        try:
+           cleaned_dataframe = dataframe.copy()
+           missing_before = dataframe.isna().sum().sum()
+
+           for column in cleaned_dataframe.columns:
+               if pd.api.types.is_numeric_dtype(cleaned_dataframe[column]):
+                cleaned_dataframe[column] = (
+                    cleaned_dataframe[column].fillna(0)
+                )
+
+               else:
+                  cleaned_dataframe[column] = (
+                        cleaned_dataframe[column].fillna("Unknown")
+                    )
+
+           missing_after = cleaned_dataframe.isna().sum().sum()
+           
+           logger.info(
+                    "Filled %d missing values based on column data types.",
+                    missing_before - missing_after
+                )
+           return cleaned_dataframe
+
+    
+        except Exception as error:
+            logger.error(
+                "Failed to fill missing values: %s",
+                error
+            )
+            raise
+    
+    
+            
+        
+    

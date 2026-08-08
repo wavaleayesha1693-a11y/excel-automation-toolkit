@@ -49,13 +49,18 @@ def main():
         required_columns
     )
 
-    # Clean DataFrame
+    # remove_duplicate_rows
     cleaned_dataframe = data_cleaner.remove_duplicate_rows(
         dataframe
     )    
-    
 
-    print("\n✅ Validation completed successfully!")
+    # fill_missing_values
+    cleaned_dataframe = data_cleaner.fill_missing_values(
+        cleaned_dataframe
+    )
+    print("\n✅ DataFrame cleaning completed successfully!")
+    print("cleaned dataframe:\n", cleaned_dataframe)
+    
 
 
 if __name__ == "__main__":
