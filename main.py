@@ -54,10 +54,16 @@ def main():
         dataframe
     )    
 
+    # get missing value report
+    missing_value_report = data_cleaner.get_missing_value_report(
+        cleaned_dataframe
+    )
+
     # fill_missing_values
     cleaned_dataframe = data_cleaner.fill_missing_values(
         cleaned_dataframe
     )
+    print("\nMissing Value Report:\n", missing_value_report)
     print("\n✅ DataFrame cleaning completed successfully!")
     print("cleaned dataframe:\n", cleaned_dataframe)
     

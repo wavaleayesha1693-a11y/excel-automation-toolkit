@@ -48,10 +48,43 @@ class DataCleaner:
             )
             raise
 
+    def get_missing_value_report(self,dataframe:pd.DataFrame) -> pd.DataFrame:
+
+        """
+        Generate a report of missing values in the DataFrame.
+
+        Args:
+            dataframe (pd.DataFrame): DataFrame to analyze.
+
+        Returns:
+            pd.DataFrame: Report of missing values per column.  
+
+        Raises:
+            Exception: If report generation fails.          
+        
+        """   
+        try:
+            missing_report = datafrme.isna().sum().reset_index()
+            missing_report.columns = ["Column", "Missing Count"]
+            missing_report["Missing_Percentage"] = (
+                                        missing_report["Missing Count"] / len(datafrme) * 100)
+            
+            
+            logger.info("Generated missing value report.")
+            
+            return missing_report
+
+        except Exception as error:
+            logger.error(
+                "Failed to generate missing value report: %s",
+                error
+            )
+            raise
+
 
     def fill_missing_values(self, dataframe:pd.DataFrame) -> pd.DataFrame:
         """
-        Fill missing values in the DataFrame with a specified value.
+        Fill missing values based on column data type.
 
         Args:
             dataframe (pd.DataFrame): DataFrame to clean.
