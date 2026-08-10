@@ -13,109 +13,159 @@ class DataTransformer:
         """
         Initialize the Data Transformer.
         """
-        logger.info("Data Transformer initialized successfully.") 
+        logger.info("Data Transformer initialized successfully.")
 
-    def strip_whitespace(self,dataframe:pd.DataFrame) -> pd.DataFrame:
+    def strip_whitespace(
+        self,
+        dataframe: pd.DataFrame
+    ) -> pd.DataFrame:
         """
-        Strip leading and trailing whitespace from string columns in the DataFrame.
+        Strip leading and trailing whitespace from string columns.
 
         Args:
-            dataframe (pd.DataFrame): DataFrame to transform.
+            dataframe (pd.DataFrame):
+                DataFrame to transform.
 
         Returns:
-            pd.DataFrame: Transformed DataFrame with whitespace stripped from string columns.
+            pd.DataFrame:
+                Transformed DataFrame with whitespace removed.
 
         Raises:
-        Exception:
-            If whitespace removal fails.
-
-        """        
+            Exception:
+                If whitespace removal fails.
+        """
 
         try:
             cleaned_dataframe = dataframe.copy()
-            string_columns = cleaned_dataframe.select_dtypes(include=["object"]).columns
-            for column in string_columns:
-                cleaned_dataframe[column] = cleaned_dataframe[column].str.strip()
 
-            logger.info("Whitespace stripped from %d string columns.",
-                        len(string_columns))
+            string_columns = (
+                cleaned_dataframe
+                .select_dtypes(include=["object"])
+                .columns
+            )
+
+            for column in string_columns:
+                cleaned_dataframe[column] = (
+                    cleaned_dataframe[column].str.strip()
+                )
+
+            logger.info(
+                "Whitespace stripped from %d string columns.",
+                len(string_columns)
+            )
+
             return cleaned_dataframe
 
         except Exception as error:
             logger.error(
-                "Failed to strip whitespace from string columns: %s", 
-                 error
-                )
+                "Failed to strip whitespace from string columns: %s",
+                error
+            )
             raise
 
-    def standardize_text(self,dataframe:pd.DataFrame,case:str = 'lower') -> pd.DataFrame:
+    def standardize_text(
+        self,
+        dataframe: pd.DataFrame,
+        case: str = "lower"
+    ) -> pd.DataFrame:
         """
-        Standardize text in string columns to a consistent format (e.g., title case).
+        Standardize text in string columns.
 
         Args:
-            dataframe (pd.DataFrame): DataFrame to transform.
+            dataframe (pd.DataFrame):
+                DataFrame to transform.
+
             case (str):
                 Case format: "lower", "upper", or "title".
 
         Returns:
-            pd.DataFrame: Transformed DataFrame with standardized text in string columns.
+            pd.DataFrame:
+                Transformed DataFrame.
 
         Raises:
-        Exception: If text standardization fails.
+            ValueError:
+                If an unsupported case option is provided.
 
-        """    
-        
+            Exception:
+                If text standardization fails.
+        """
+
         try:
-            valid_cases = ['lower', 'upper', 'title']
+            valid_cases = {"lower", "upper", "title"}
+
             if case not in valid_cases:
-                raise ValueError(f"Invalid case option. Choose from {valid_cases}.")
-            
+                raise ValueError(
+                    "Invalid case option. "
+                    "Choose from 'lower', 'upper', or 'title'."
+                )
+
             cleaned_dataframe = dataframe.copy()
-            string_columns = cleaned_dataframe.select_dtypes(include=["object"]).columns
+
+            string_columns = (
+                cleaned_dataframe
+                .select_dtypes(include=["object"])
+                .columns
+            )
 
             for column in string_columns:
-                if case == 'lower':
-                    cleaned_dataframe[column] = cleaned_dataframe[column].str.lower()
-                elif case == 'upper':
-                    cleaned_dataframe[column] = cleaned_dataframe[column].str.upper()
-                elif case == 'title':
-                    cleaned_dataframe[column] = cleaned_dataframe[column].str.title()
-                
-            logger.info("Text standardized in %d string columns to %s case.",
-                        len(string_columns), case)
+
+                if case == "lower":
+                    cleaned_dataframe[column] = (
+                        cleaned_dataframe[column].str.lower()
+                    )
+
+                elif case == "upper":
+                    cleaned_dataframe[column] = (
+                        cleaned_dataframe[column].str.upper()
+                    )
+
+                elif case == "title":
+                    cleaned_dataframe[column] = (
+                        cleaned_dataframe[column].str.title()
+                    )
+
+            logger.info(
+                "Text standardized in %d string columns to %s case.",
+                len(string_columns),
+                case
+            )
+
             return cleaned_dataframe
 
         except Exception as error:
             logger.error(
-                "Failed to standardize text in string columns: %s", 
-                 error
-                )
+                "Failed to standardize text in string columns: %s",
+                error
+            )
             raise
-        
 
-    def rename_columns(self,dataframe: pd.DataFrame,column_mapping: dict[str, str]) -> pd.DataFrame:
-
+    def rename_columns(
+        self,
+        dataframe: pd.DataFrame,
+        column_mapping: dict[str, str]
+    ) -> pd.DataFrame:
         """
-        Rename columns in the DataFrame based on a provided mapping.
+        Rename columns based on a provided mapping.
+
+        Existing columns are renamed.
+        Missing columns are skipped and logged as warnings.
 
         Args:
             dataframe (pd.DataFrame):
                 DataFrame to transform.
 
             column_mapping (dict[str, str]):
-                Dictionary mapping existing column names
-                to new column names.
+                Mapping of old column names to new column names.
 
         Returns:
             pd.DataFrame:
-                Transformed DataFrame with renamed columns.
+                DataFrame with renamed columns.
 
         Raises:
-            Warning:
-                If some columns in the mapping are not found in the DataFrame.
-            ValueError:
-                If renaming of columnns fails
+            Exception:
+                If column renaming fails.
         """
+
         try:
             cleaned_dataframe = dataframe.copy()
 
@@ -128,6 +178,7 @@ class DataTransformer:
 
                 if old_column in available_columns:
                     existing_mapping[old_column] = new_column
+
                 else:
                     missing_columns.append(old_column)
 
@@ -157,6 +208,130 @@ class DataTransformer:
         except Exception as error:
             logger.error(
                 "Failed to rename columns in the DataFrame: %s",
+                error
+            )
+            raise
+
+    def convert_data_types(self,dataframe: pd.DataFrame,dtype_mapping: dict[str, str]) -> pd.DataFrame:
+        """
+        Convert specified DataFrame columns to requested data types.
+
+        Supported types:
+            - int
+            - float
+            - string
+            - datetime
+
+        Args:
+            dataframe (pd.DataFrame):
+                DataFrame to transform.
+
+            dtype_mapping (dict[str, str]):
+                Mapping of column names to target data types.
+
+        Returns:
+            pd.DataFrame:
+                DataFrame with successfully converted data types.
+
+        Raises:
+            Exception:
+                If an unexpected error occurs during conversion.
+        """
+
+        try:
+            cleaned_dataframe = dataframe.copy()
+
+            available_columns = set(cleaned_dataframe.columns)
+
+            missing_columns = []
+            existing_mapping = {}
+
+            for column, dtype in dtype_mapping.items():
+
+                if column in available_columns:
+                    existing_mapping[column] = dtype
+
+                else:
+                    missing_columns.append(column)
+
+            if missing_columns:
+                logger.warning(
+                    "Columns not found and skipped during "
+                    "data type conversion: %s",
+                    ", ".join(missing_columns)
+                )
+
+            conversion_errors = []
+
+            for column, dtype in existing_mapping.items():
+
+                try:
+                    if dtype == "int":
+                        cleaned_dataframe[column] = pd.to_numeric(
+                            cleaned_dataframe[column],
+                            errors="raise"
+                        ).astype("Int64")
+
+                    elif dtype == "float":
+                        cleaned_dataframe[column] = pd.to_numeric(
+                            cleaned_dataframe[column],
+                            errors="raise"
+                        ).astype(float)
+
+                    elif dtype == "string":
+                        cleaned_dataframe[column] = (
+                            cleaned_dataframe[column].astype("string")
+                        )
+
+                    elif dtype == "datetime":
+                        cleaned_dataframe[column] = pd.to_datetime(
+                            cleaned_dataframe[column],
+                            errors="raise"
+                        )
+
+                    else:
+                        raise ValueError(
+                            f"Unsupported data type '{dtype}'. "
+                            f"Supported types: int, float, string, datetime."
+                        )
+
+                    logger.info(
+                        "Column '%s' successfully converted to %s.",
+                        column,
+                        dtype
+                    )
+
+                except Exception as error:
+
+                    conversion_errors.append(
+                        f"{column} → {dtype}: {error}"
+                    )
+
+                    logger.warning(
+                        "Column '%s' could not be converted to %s: %s",
+                        column,
+                        dtype,
+                        error
+                    )
+
+                    continue
+
+            if conversion_errors:
+                logger.warning(
+                    "Data type conversion completed with %d warning(s).",
+                    len(conversion_errors)
+                )
+
+            else:
+                logger.info(
+                    "All requested data type conversions completed successfully."
+                )
+
+            return cleaned_dataframe
+
+        except Exception as error:
+            logger.error(
+                "Unexpected error during data type conversion: %s",
                 error
             )
             raise

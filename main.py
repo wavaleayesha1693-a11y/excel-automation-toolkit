@@ -87,10 +87,21 @@ def main():
         }
     )
 
+    # convert data type
+    transformed_dataframe = data_transformer.convert_data_types(
+        transformed_dataframe,
+        dtype_mapping = {
+            "Emp_ID": "int",
+            "Annual_Salary": "currency",
+            "Department": 'string'
+            }
+    )
+
     # print("\nMissing Value Report:\n", missing_value_report)
     # print("\n✅ DataFrame cleaning completed successfully!")
     # print("cleaned dataframe:\n", cleaned_dataframe)
-    print("Renamed columns of the DataFrame:\n",transformed_dataframe)
+    # print("Renamed columns of the DataFrame:\n",transformed_dataframe)
+    print("DataFrame after converting dtypes:\n",transformed_dataframe)
     
 
 
