@@ -76,10 +76,21 @@ def main():
         transformed_dataframe
     )
 
+    #rename_columns
+    transformed_dataframe = data_transformer.rename_columns(
+        transformed_dataframe,
+        column_mapping={
+            "Employee_ID": "Emp_ID",
+            "Name": "Employee_Name",
+            "Salary": "Annual_Salary",
+            "Department_Name":"Dept_Name"
+        }
+    )
+
     # print("\nMissing Value Report:\n", missing_value_report)
     # print("\n✅ DataFrame cleaning completed successfully!")
     # print("cleaned dataframe:\n", cleaned_dataframe)
-    print("standardized text of the DataFrame:\n",transformed_dataframe)
+    print("Renamed columns of the DataFrame:\n",transformed_dataframe)
     
 
 
