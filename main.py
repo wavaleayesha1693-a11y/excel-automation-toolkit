@@ -33,6 +33,10 @@ def main():
     r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details_cleaned.xlsx"
     )
 
+    report_output_path = Path(
+    r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details_missing_report.xlsx"
+    )
+
     # Required columns
     required_columns = [
         "Employee_ID",
@@ -144,9 +148,16 @@ def main():
     # --------------------------------------------------
     # 11. Write to Excel
     # --------------------------------------------------
+    
     excel_writer.write_to_excel(
     transformed_dataframe,
     output_path
+    )
+
+    #missing_value_report
+    excel_writer.write_to_excel(
+    missing_value_report,
+    report_output_path
     )
     
 if __name__ == "__main__":
