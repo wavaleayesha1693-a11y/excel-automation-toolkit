@@ -6,6 +6,8 @@ from src.modules.excel_reader import ExcelReader
 from src.modules.data_validator import DataValidator
 from src.modules.data_cleaner import DataCleaner
 from src.modules.data_transformer import DataTransformer
+from src.modules.excel_writer import ExcelWriter
+
 
 # Configure logging
 logging.basicConfig(
@@ -19,9 +21,16 @@ def main():
     Main entry point for the Excel Automation Toolkit.
     """
 
-    # File path
+    # --------------------------------------------------
+    # 1. File configuration
+    # --------------------------------------------------
+
     file_path = Path(
         r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details.xlsx"
+    )
+
+    output_path = Path(
+    r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details_cleaned.xlsx"
     )
 
     # Required columns
@@ -31,79 +40,114 @@ def main():
         "Salary"
     ]
 
-    # Initialize classes
+    # Column renaming configuration
+    column_mapping = {
+        "Employee_ID": "Emp_ID",
+        "Name": "Employee_Name",
+        "Salary": "Annual_Salary",
+        "Department_Name": "Dept_Name"
+    }
+
+    # Data type conversion configuration
+    dtype_mapping = {
+        "Emp_ID": "int",
+        "Annual_Salary": "float",
+        "Dept_Name": "string"
+    }
+
+    # --------------------------------------------------
+    # 2. Initialize modules
+    # --------------------------------------------------
+
     file_handler = FileHandler()
     excel_reader = ExcelReader()
     data_validator = DataValidator()
     data_cleaner = DataCleaner()
     data_transformer = DataTransformer()
+    excel_writer = ExcelWriter()
 
-    # Validate file
+    # --------------------------------------------------
+    # 3. Validate file
+    # --------------------------------------------------
+
     file_handler.validate_file_exists(file_path)
-    file_handler.validate_file_extension(file_path)
 
-    # Read Excel
+    file_handler.validate_file_extension(
+        file_path
+    )
+
+    # --------------------------------------------------
+    # 4. Read Excel file
+    # --------------------------------------------------
+
     dataframe = excel_reader.read_excel(file_path)
 
-    # Validate DataFrame
+    # --------------------------------------------------
+    # 5. Validate required columns
+    # --------------------------------------------------
+
     data_validator.validate_required_columns(
         dataframe,
         required_columns
     )
 
-    # remove_duplicate_rows
+    # --------------------------------------------------
+    # 6. Remove duplicate rows
+    # --------------------------------------------------
+
     cleaned_dataframe = data_cleaner.remove_duplicate_rows(
         dataframe
-    )    
+    )
 
-    # get missing value report
+    # --------------------------------------------------
+    # 7. Generate missing value report
+    # --------------------------------------------------
+
     missing_value_report = data_cleaner.get_missing_value_report(
         cleaned_dataframe
     )
 
-    # fill_missing_values
+    # --------------------------------------------------
+    # 8. Fill missing values
+    # --------------------------------------------------
+
     cleaned_dataframe = data_cleaner.fill_missing_values(
         cleaned_dataframe
     )
 
-    # strip whitespace
-    transformed_dataframe = data_transformer.strip_whitespace(
-    cleaned_dataframe
+    # --------------------------------------------------
+    # 9. Run complete transformation pipeline
+    # --------------------------------------------------
+
+    transformed_dataframe = data_transformer.transform(
+        cleaned_dataframe,
+        case="lower",
+        column_mapping=column_mapping,
+        dtype_mapping=dtype_mapping
     )
 
-    # standardize_text
-    transformed_dataframe = data_transformer.standardize_text(
-        transformed_dataframe
-    )
+    # --------------------------------------------------
+    # 10. Display results
+    # --------------------------------------------------
 
-    #rename_columns
-    transformed_dataframe = data_transformer.rename_columns(
-        transformed_dataframe,
-        column_mapping={
-            "Employee_ID": "Emp_ID",
-            "Name": "Employee_Name",
-            "Salary": "Annual_Salary",
-            "Department_Name":"Dept_Name"
-        }
-    )
+    print("\nMissing Value Report:")
+    print(missing_value_report)
 
-    # convert data type
-    transformed_dataframe = data_transformer.convert_data_types(
-        transformed_dataframe,
-        dtype_mapping = {
-            "Emp_ID": "int",
-            "Annual_Salary": "currency",
-            "Department": 'string'
-            }
-    )
+    print("\nFinal Transformed DataFrame:")
+    print(transformed_dataframe)
 
-    # print("\nMissing Value Report:\n", missing_value_report)
-    # print("\n✅ DataFrame cleaning completed successfully!")
-    # print("cleaned dataframe:\n", cleaned_dataframe)
-    # print("Renamed columns of the DataFrame:\n",transformed_dataframe)
-    print("DataFrame after converting dtypes:\n",transformed_dataframe)
+    print("\nFinal Data Types:")
+    print(transformed_dataframe.dtypes)
+
+    print("\nDataFrame transformation completed successfully!")
+
+    # --------------------------------------------------
+    # 11. Write to Excel
+    # --------------------------------------------------
+    excel_writer.write_to_excel(
+    transformed_dataframe,
+    output_path
+    )
     
-
-
 if __name__ == "__main__":
     main()

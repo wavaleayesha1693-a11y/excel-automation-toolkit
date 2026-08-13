@@ -335,3 +335,82 @@ class DataTransformer:
                 error
             )
             raise
+
+    def transform(
+        self,
+        dataframe: pd.DataFrame,
+        case: str = "lower",
+        column_mapping: dict[str, str] | None = None,
+        dtype_mapping: dict[str, str] | None = None
+    ) -> pd.DataFrame:
+        """
+        Apply the complete data transformation pipeline.
+
+        Transformation sequence:
+            1. Strip whitespace
+            2. Standardize text
+            3. Rename columns
+            4. Convert data types
+
+        Args:
+            dataframe (pd.DataFrame):
+                DataFrame to transform.
+
+            case (str):
+                Text case to use: "lower", "upper", or "title".
+
+            column_mapping (dict[str, str] | None):
+                Mapping of old column names to new column names.
+
+            dtype_mapping (dict[str, str] | None):
+                Mapping of column names to target data types.
+
+        Returns:
+            pd.DataFrame:
+                Fully transformed DataFrame.
+
+        Raises:
+            Exception:
+                If an unexpected error occurs during transformation.
+        """
+
+        try:
+            transformed_dataframe = dataframe
+
+            # Step 1: Strip whitespace
+            transformed_dataframe = self.strip_whitespace(
+                transformed_dataframe
+            )
+
+            # Step 2: Standardize text
+            transformed_dataframe = self.standardize_text(
+                transformed_dataframe,
+                case=case
+            )
+
+            # Step 3: Rename columns
+            if column_mapping:
+                transformed_dataframe = self.rename_columns(
+                    transformed_dataframe,
+                    column_mapping
+                )
+
+            # Step 4: Convert data types
+            if dtype_mapping:
+                transformed_dataframe = self.convert_data_types(
+                    transformed_dataframe,
+                    dtype_mapping
+                )
+
+            logger.info(
+                "Data transformation pipeline completed successfully."
+            )
+
+            return transformed_dataframe
+
+        except Exception as error:
+            logger.error(
+                "Failed to complete data transformation pipeline: %s",
+                error
+            )
+            raise
