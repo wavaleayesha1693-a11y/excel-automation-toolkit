@@ -26,15 +26,23 @@ def main():
     # --------------------------------------------------
 
     file_path = Path(
-        r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details.xlsx"
+        r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Records.xlsx"
     )
 
-    output_path = Path(
-    r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details_cleaned.xlsx"
+    # --------------------------------------------------
+    # Output configuration
+    # --------------------------------------------------
+
+    output_directory = file_path.parent / "output"
+
+    cleaned_output_path = (
+        output_directory
+        / f"{file_path.stem}_cleaned{file_path.suffix}"
     )
 
-    report_output_path = Path(
-    r"C:\Users\ADMIN\Downloads\Documents\Ayesha_PythonProjects\Employee_Details_missing_report.xlsx"
+    report_output_path = (
+        output_directory
+        / f"{file_path.stem}_missing_report{file_path.suffix}"
     )
 
     # Required columns
@@ -151,14 +159,23 @@ def main():
     
     excel_writer.write_to_excel(
     transformed_dataframe,
-    output_path
+    cleaned_output_path
     )
 
-    #missing_value_report
     excel_writer.write_to_excel(
-    missing_value_report,
-    report_output_path
+        missing_value_report,
+        report_output_path
     )
+    # excel_writer.write_to_excel(
+    # transformed_dataframe,
+    # output_path
+    # )
+
+    # #missing_value_report
+    # excel_writer.write_to_excel(
+    # missing_value_report,
+    # report_output_path
+    # )
     
 if __name__ == "__main__":
     main()
