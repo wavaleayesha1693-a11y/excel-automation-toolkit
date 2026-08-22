@@ -40,7 +40,7 @@ class DataTransformer:
 
             string_columns = (
                 cleaned_dataframe
-                .select_dtypes(include=["object"])
+                .select_dtypes(include=["object","string"])
                 .columns
             )
 
@@ -103,7 +103,7 @@ class DataTransformer:
 
             string_columns = (
                 cleaned_dataframe
-                .select_dtypes(include=["object"])
+                .select_dtypes(include=["object","string"])
                 .columns
             )
 
